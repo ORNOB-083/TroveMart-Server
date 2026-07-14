@@ -25,24 +25,24 @@ export async function verifyGoogleToken(idToken: string): Promise<OAuthProfile> 
     };
 }
 
-export async function verifyFacebookToken(accessToken: string): Promise<OAuthProfile> {
+export async function exchangeFacebookCode(code: string, redirectUri: string): Promise<OAuthProfile> {
     const appId = process.env.FACEBOOK_APP_ID;
     const appSecret = process.env.FACEBOOK_APP_SECRET;
     if (!appId || !appSecret) throw new Error('Facebook app credentials are not defined in .env');
 
-    // Confirm the token was actually issued to our app, not a forged one
-    const appToken = `${appId}|${appSecret}`;
-    const debugRes = await fetch(
-        `https://graph.facebook.com/debug_token?input_token=${accessToken}&access_token=${appToken}`
+    const tokenRes = await fetch(
+        `https://graph.facebook.com/v19.0/oauth/access_token?client_id=${appId}&redirect_uri=${encodeURIComponent(
+            redirectUri
+        )}&client_secret=${appSecret}&code=${code}`
     );
-    const debugData = await debugRes.json();
+    const tokenData = await tokenRes.json();
 
-    if (!debugData?.data?.is_valid || debugData.data.app_id !== appId) {
-        throw new Error('Invalid Facebook token.');
+    if (!tokenData.access_token) {
+        throw new Error(tokenData.error?.message || 'Failed to complete Facebook sign-in.');
     }
 
     const meRes = await fetch(
-        `https://graph.facebook.com/me?fields=id,name,email,picture&access_token=${accessToken}`
+        `https://graph.facebook.com/me?fields=id,name,email,picture&access_token=${tokenData.access_token}`
     );
     const me = await meRes.json();
 
