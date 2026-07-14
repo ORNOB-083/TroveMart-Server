@@ -5,6 +5,7 @@ import { connectDB } from './config/db';
 import authRoutes from './routes/auth.routes';
 import itemsRoutes from './routes/items.routes';
 import { errorHandler } from './middleware/errorHandler';
+import reviewsRoutes from './routes/reviews.routes';
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.get('/', (req, res) => {
 
 app.use('/auth', authRoutes);
 app.use('/items', itemsRoutes);
+app.use('/items/:itemId/reviews', reviewsRoutes);
 
 app.use(errorHandler);
 

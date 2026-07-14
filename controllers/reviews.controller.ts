@@ -25,7 +25,8 @@ export async function addReview(req: Request, res: Response) {
         const { rating, comment } = req.body;
         const user = (req as any).user; // set by requireAuth middleware
 
-        if (!ObjectId.isValid(itemId)) {
+        const isValidObjectId = ObjectId.isValid(itemId);
+        if (!isValidObjectId && !itemId) {
             return res.status(400).json({ message: 'Invalid item ID.' });
         }
         if (!rating || rating < 1 || rating > 5) {
@@ -62,8 +63,9 @@ export async function addReview(req: Request, res: Response) {
         const reviewCount = allReviews.length;
         const ratingAvg = allReviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount;
 
+        const lookupItemId = isValidObjectId ? new ObjectId(itemId) : itemId;
         await items.updateOne(
-            { _id: new ObjectId(itemId) as any },
+            { _id: lookupItemId as any },
             { $set: { ratingAvg: Math.round(ratingAvg * 10) / 10, reviewCount } }
         );
 

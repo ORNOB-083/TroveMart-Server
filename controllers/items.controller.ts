@@ -83,7 +83,8 @@ export async function getItemById(req: Request, res: Response) {
             return res.status(400).json({ message: 'Invalid item ID.' });
         }
 
-        const item = await items.findOne({ _id: new ObjectId(id) as any });
+        const lookupId = ObjectId.isValid(id) ? new ObjectId(id) : id;
+        const item = await items.findOne({ _id: lookupId as any });
         if (!item) {
             return res.status(404).json({ message: 'Item not found.' });
         }
