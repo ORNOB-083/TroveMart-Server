@@ -1,17 +1,18 @@
 export type UserRole = 'user' | 'seller' | 'admin';
+export type AuthProvider = 'local' | 'google' | 'facebook';
 
 export interface User {
     _id?: string;
     name: string;
     email: string;
-    password: string; // hashed
+    password?: string; // hashed — omitted for OAuth users
     role: UserRole;
     image?: string;
-    sellerStatus?: 'none' | 'pending' | 'approved' | 'rejected'; // for the "become a seller" flow
+    provider: AuthProvider;
+    sellerStatus?: 'none' | 'pending' | 'approved' | 'rejected';
     createdAt: Date;
 }
 
-// What we ever send back to the client — never the password
 export interface SafeUser {
     id: string;
     name: string;
