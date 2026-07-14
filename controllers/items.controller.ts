@@ -79,17 +79,28 @@ export async function getItemById(req: Request, res: Response) {
         const idParam = req.params.id;
         const id = Array.isArray(idParam) ? idParam[0] : idParam;
 
-        if (!id || !ObjectId.isValid(id)) {
+        if (!id) {
             return res.status(400).json({ message: 'Invalid item ID.' });
         }
 
-        const lookupId = ObjectId.isValid(id) ? new ObjectId(id) : id;
-        const item = await items.findOne({ _id: lookupId as any });
+        let item: Item | null = null;
+
+        if (ObjectId.isValid(id)) {
+            try {
+                item = await items.findOne({ _id: new ObjectId(id) } as any);
+            } catch {
+                item = null;
+            }
+        }
+
+        if (!item) {
+            item = await items.findOne({ _id: id } as any);
+        }
+
         if (!item) {
             return res.status(404).json({ message: 'Item not found.' });
         }
 
-        // Related items: same category, excluding the current item
         const related = await items
             .find({ category: item.category, _id: { $ne: item._id } })
             .limit(4)
