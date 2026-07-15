@@ -1,3 +1,5 @@
+export type ItemStatus = 'pending' | 'approved' | 'rejected';
+
 export interface Item {
     _id?: string;
     title: string;
@@ -9,6 +11,8 @@ export interface Item {
     specs: Record<string, string>;
     sellerId: string;
     sellerName: string;
+    status: ItemStatus;
+    likes: string[]; // userIds who liked this item
     ratingAvg: number;
     reviewCount: number;
     createdAt: Date;
