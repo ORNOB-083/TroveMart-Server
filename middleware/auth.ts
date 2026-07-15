@@ -19,6 +19,9 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
     }
 }
 
+// Alias for requireAuth
+export const authenticate = requireAuth;
+
 // Optional: restrict a route to specific roles, e.g. requireRole('admin')
 export function requireRole(...roles: string[]) {
     return (req: Request, res: Response, next: NextFunction) => {

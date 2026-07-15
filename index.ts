@@ -10,6 +10,7 @@ import adminRoutes from './routes/admin.routes';
 import myReviewsRoutes from './routes/myReviews.routes';
 import wishlistRoutes from './routes/wishlist.routes';
 import sellerApplicationsRoutes from './routes/sellerApplications.routes';
+import cartRoutes from './routes/cart.routes';
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ app.use('/admin', adminRoutes);
 app.use('/reviews', myReviewsRoutes);
 app.use('/wishlist', wishlistRoutes);
 app.use('/seller-applications', sellerApplicationsRoutes);
+app.use('/cart', cartRoutes);
 
 app.use(errorHandler);
 

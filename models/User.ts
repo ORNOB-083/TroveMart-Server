@@ -1,6 +1,11 @@
 export type UserRole = 'user' | 'seller' | 'admin';
 export type AuthProvider = 'local' | 'google' | 'facebook';
 
+export interface CartItem {
+    itemId: string;
+    quantity: number;
+}
+
 export interface User {
     _id?: string;
     name: string;
@@ -12,6 +17,7 @@ export interface User {
     sellerStatus?: 'none' | 'pending' | 'approved' | 'rejected';
     banned: boolean;
     wishlist: string[];
+    cart?: CartItem[];
     createdAt: Date;
 }
 
