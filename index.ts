@@ -9,6 +9,7 @@ import reviewsRoutes from './routes/reviews.routes';
 import adminRoutes from './routes/admin.routes';
 import myReviewsRoutes from './routes/myReviews.routes';
 import wishlistRoutes from './routes/wishlist.routes';
+import sellerApplicationsRoutes from './routes/sellerApplications.routes';
 
 dotenv.config();
 
@@ -28,6 +29,7 @@ app.use('/items/:itemId/reviews', reviewsRoutes);
 app.use('/admin', adminRoutes);
 app.use('/reviews', myReviewsRoutes);
 app.use('/wishlist', wishlistRoutes);
+app.use('/seller-applications', sellerApplicationsRoutes);
 
 app.use(errorHandler);
 

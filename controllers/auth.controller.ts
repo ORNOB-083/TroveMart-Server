@@ -5,6 +5,7 @@ import { User, SafeUser, AuthProvider } from '../models/User';
 import { signToken } from '../utils/jwt';
 import { isValidEmail, isValidPassword } from '../utils/validators';
 import { verifyGoogleToken, exchangeFacebookCode } from '../utils/oauth';
+import { ObjectId } from 'mongodb';
 
 export async function register(req: Request, res: Response) {
     try {
@@ -170,5 +171,32 @@ export async function facebookAuth(req: Request, res: Response) {
     } catch (err: any) {
         console.error('Facebook auth error:', err);
         return res.status(401).json({ message: err.message || 'Facebook sign-in failed. Please try again.' });
+    }
+}
+
+export async function refreshToken(req: Request, res: Response) {
+    try {
+        const authUser = (req as any).user;
+        const db = getDB();
+        const users = db.collection<User>('users');
+
+        const user = await users.findOne({ _id: new ObjectId(authUser.id) } as any);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        const safeUser: SafeUser = {
+            id: user._id!.toString(),
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            image: user.image,
+        };
+
+        const token = signToken(safeUser);
+        return res.status(200).json({ token, user: safeUser });
+    } catch (err) {
+        console.error('Refresh token error:', err);
+        return res.status(500).json({ message: 'Failed to refresh session.' });
     }
 }
