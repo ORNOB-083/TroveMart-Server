@@ -11,6 +11,7 @@ export interface User {
     provider: AuthProvider;
     sellerStatus?: 'none' | 'pending' | 'approved' | 'rejected';
     banned: boolean;
+    wishlist: string[];
     createdAt: Date;
 }
 
