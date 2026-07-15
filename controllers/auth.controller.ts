@@ -39,6 +39,7 @@ export async function register(req: Request, res: Response) {
             provider: 'local',
             banned: false,
             sellerStatus: 'none',
+            wishlist: [], // ✅ FIXED: Added missing 'wishlist' property
             createdAt: new Date(),
         };
 
@@ -124,6 +125,7 @@ async function findOrCreateOAuthUser(
             provider,
             sellerStatus: 'none',
             banned: false,
+            wishlist: [], // ✅ FIXED: Added missing 'wishlist' property
             createdAt: new Date(),
         };
         const result = await users.insertOne(newUser);
