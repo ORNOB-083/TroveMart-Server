@@ -8,6 +8,7 @@ import { errorHandler } from './middleware/errorHandler';
 import reviewsRoutes from './routes/reviews.routes';
 import adminRoutes from './routes/admin.routes';
 import myReviewsRoutes from './routes/myReviews.routes';
+import wishlistRoutes from './routes/wishlist.routes';
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use('/items', itemsRoutes);
 app.use('/items/:itemId/reviews', reviewsRoutes);
 app.use('/admin', adminRoutes);
 app.use('/reviews', myReviewsRoutes);
+app.use('/wishlist', wishlistRoutes);
 
 app.use(errorHandler);
 
