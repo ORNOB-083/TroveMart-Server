@@ -10,6 +10,7 @@ export interface User {
     image?: string;
     provider: AuthProvider;
     sellerStatus?: 'none' | 'pending' | 'approved' | 'rejected';
+    banned: boolean;
     createdAt: Date;
 }
 

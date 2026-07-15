@@ -36,6 +36,7 @@ export async function register(req: Request, res: Response) {
             password: hashedPassword,
             role: 'user',
             provider: 'local',
+            banned: false,
             sellerStatus: 'none',
             createdAt: new Date(),
         };
@@ -72,6 +73,10 @@ export async function login(req: Request, res: Response) {
         const user = await users.findOne({ email: email.toLowerCase() });
         if (!user || !user.password) {
             return res.status(401).json({ message: 'Invalid email or password.' });
+        }
+
+        if (user.banned) {
+            return res.status(403).json({ message: 'This account has been banned. Contact support for help.' });
         }
 
         const passwordMatches = await bcrypt.compare(password, user.password);

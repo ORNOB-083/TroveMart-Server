@@ -149,3 +149,17 @@ export async function createItem(req: Request, res: Response) {
     return res.status(500).json({ message: 'Failed to create item.' });
   }
 }
+
+export async function getMyItems(req: Request, res: Response) {
+  try {
+    const user = (req as any).user;
+    const db = getDB();
+    const items = db.collection<Item>('items');
+
+    const results = await items.find({ sellerId: user.id }).sort({ createdAt: -1 }).toArray();
+    return res.status(200).json({ items: results });
+  } catch (err) {
+    console.error('Get my items error:', err);
+    return res.status(500).json({ message: 'Failed to load your items.' });
+  }
+}
