@@ -19,7 +19,6 @@ export async function getItems(req: Request, res: Response) {
       limit = '8',
     } = req.query as Record<string, string>;
 
-    // Only ever show approved items on the public explore route
     const filter: Record<string, any> = { status: 'approved' };
 
     if (search.trim()) {
@@ -45,8 +44,8 @@ export async function getItems(req: Request, res: Response) {
     };
     const sortQuery = sortMap[sort] || sortMap.newest;
 
-    const pageNum = Math.max(1, parseInt(page));
-    const limitNum = Math.min(24, Math.max(1, parseInt(limit)));
+    const pageNum = Math.max(1, parseInt(page, 10) || 1);
+    const limitNum = Math.min(24, Math.max(1, parseInt(limit, 10) || 8));
     const skip = (pageNum - 1) * limitNum;
 
     const [results, total] = await Promise.all([
@@ -70,13 +69,16 @@ export async function getItemById(req: Request, res: Response) {
   try {
     const db = getDB();
     const items = db.collection<Item>('items');
-    const { id } = req.params;
+
+    const idParam = req.params.id;
+    const id = Array.isArray(idParam) ? idParam[0] : idParam;
 
     if (!ObjectId.isValid(id)) {
       return res.status(400).json({ message: 'Invalid item ID.' });
     }
 
-    const item = await items.findOne({ _id: new ObjectId(id) as any, status: 'approved' });
+    const item = await items.findOne({ _id: new ObjectId(id), status: 'approved' } as any);
+
     if (!item) {
       return res.status(404).json({ message: 'Item not found.' });
     }

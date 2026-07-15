@@ -23,7 +23,9 @@ export async function getAdminItems(req: Request, res: Response) {
 
 async function updateItemStatus(req: Request, res: Response, status: ItemStatus) {
     try {
-        const { id } = req.params;
+        const idParam = req.params.id;
+        const id = Array.isArray(idParam) ? idParam[0] : idParam;
+
         if (!ObjectId.isValid(id)) {
             return res.status(400).json({ message: 'Invalid item ID.' });
         }
@@ -32,7 +34,7 @@ async function updateItemStatus(req: Request, res: Response, status: ItemStatus)
         const items = db.collection<Item>('items');
 
         const result = await items.findOneAndUpdate(
-            { _id: new ObjectId(id) as any },
+            { _id: new ObjectId(id) } as any,
             { $set: { status } },
             { returnDocument: 'after' }
         );
@@ -58,7 +60,7 @@ export async function getAllUsers(req: Request, res: Response) {
         if (role !== 'all') filter.role = role;
 
         const results = await users
-            .find(filter, { projection: { password: 0 } }) // never send password hashes
+            .find(filter, { projection: { password: 0 } })
             .sort({ createdAt: -1 })
             .toArray();
 
@@ -71,7 +73,9 @@ export async function getAllUsers(req: Request, res: Response) {
 
 async function setUserBanStatus(req: Request, res: Response, banned: boolean) {
     try {
-        const { id } = req.params;
+        const idParam = req.params.id;
+        const id = Array.isArray(idParam) ? idParam[0] : idParam;
+
         if (!ObjectId.isValid(id)) {
             return res.status(400).json({ message: 'Invalid user ID.' });
         }
@@ -79,7 +83,7 @@ async function setUserBanStatus(req: Request, res: Response, banned: boolean) {
         const db = getDB();
         const users = db.collection<User>('users');
 
-        const target = await users.findOne({ _id: new ObjectId(id) as any });
+        const target = await users.findOne({ _id: new ObjectId(id) } as any);
         if (!target) {
             return res.status(404).json({ message: 'User not found.' });
         }
@@ -88,7 +92,7 @@ async function setUserBanStatus(req: Request, res: Response, banned: boolean) {
         }
 
         const result = await users.findOneAndUpdate(
-            { _id: new ObjectId(id) as any },
+            { _id: new ObjectId(id) } as any,
             { $set: { banned } },
             { returnDocument: 'after', projection: { password: 0 } }
         );
@@ -99,8 +103,6 @@ async function setUserBanStatus(req: Request, res: Response, banned: boolean) {
         return res.status(500).json({ message: 'Failed to update user.' });
     }
 }
-
-
 
 export const approveItem = (req: Request, res: Response) => updateItemStatus(req, res, 'approved');
 export const rejectItem = (req: Request, res: Response) => updateItemStatus(req, res, 'rejected');

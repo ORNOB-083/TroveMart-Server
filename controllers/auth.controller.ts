@@ -122,6 +122,7 @@ async function findOrCreateOAuthUser(
             image: profile.image,
             provider,
             sellerStatus: 'none',
+            banned: false,
             createdAt: new Date(),
         };
         const result = await users.insertOne(newUser);
