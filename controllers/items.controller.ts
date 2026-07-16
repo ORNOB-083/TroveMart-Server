@@ -158,6 +158,11 @@ export async function getMyItems(req: Request, res: Response) {
     const db = getDB();
     const items = db.collection<Item>('items');
 
+    // Only return items if user is a seller or admin
+    if (user.role !== 'seller' && user.role !== 'admin') {
+      return res.status(200).json({ items: [] });
+    }
+
     const results = await items.find({ sellerId: user.id }).sort({ createdAt: -1 }).toArray();
     return res.status(200).json({ items: results });
   } catch (err) {

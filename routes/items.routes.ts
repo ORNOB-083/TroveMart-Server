@@ -6,7 +6,7 @@ const router = Router();
 
 router.get('/', getItems);
 router.get('/categories', getCategories);
-router.get('/mine', requireAuth, requireRole('seller', 'admin'), getMyItems);
+router.get('/mine', requireAuth, getMyItems); // Allow any authenticated user to get their items
 router.get('/:id', getItemById);
 router.post('/', requireAuth, requireRole('seller', 'admin'), createItem);
 
