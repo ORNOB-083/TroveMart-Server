@@ -125,7 +125,22 @@ async function updateApplicationStatus(req: Request, res: Response, status: 'app
             );
         }
 
-        return res.status(200).json({ message: `Application ${status}.` });
+        // Get updated user to return with new role
+        const updatedUser = await users.findOne({ _id: new ObjectId(application.userId) } as any);
+        
+        if (!updatedUser) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+        
+        const safeUser = {
+            id: updatedUser._id.toString(),
+            name: updatedUser.name,
+            email: updatedUser.email,
+            role: updatedUser.role,
+            image: updatedUser.image,
+        };
+
+        return res.status(200).json({ message: `Application ${status}.`, user: safeUser });
     } catch (err) {
         console.error('Update application status error:', err);
         return res.status(500).json({ message: 'Failed to update application.' });
